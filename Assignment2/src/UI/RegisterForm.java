@@ -5,7 +5,14 @@
 package UI;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
@@ -47,7 +54,10 @@ public class RegisterForm extends javax.swing.JFrame {
         firstnameValidation = new javax.swing.JLabel();
         lastnameValidation = new javax.swing.JLabel();
         ageValidation = new javax.swing.JLabel();
+        messageValidation = new javax.swing.JLabel();
         emailValidation = new javax.swing.JLabel();
+        uploadLabel = new javax.swing.JLabel();
+        imageIconLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -112,6 +122,15 @@ public class RegisterForm extends javax.swing.JFrame {
         messageLabel.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         messageLabel.setText("Message");
 
+        messageTxtField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                messageTxtFieldFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                messageTxtFieldFocusLost(evt);
+            }
+        });
+
         submitBtn.setBackground(new java.awt.Color(51, 153, 255));
         submitBtn.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         submitBtn.setForeground(new java.awt.Color(255, 255, 255));
@@ -137,6 +156,8 @@ public class RegisterForm extends javax.swing.JFrame {
 
         ageValidation.setForeground(new java.awt.Color(255, 0, 51));
 
+        messageValidation.setForeground(new java.awt.Color(255, 0, 0));
+
         emailValidation.setForeground(new java.awt.Color(255, 0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -154,42 +175,54 @@ public class RegisterForm extends javax.swing.JFrame {
                             .addGap(67, 67, 67)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(submitBtn)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(uploadImgBtn)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(lastnameLabel)
-                                                .addComponent(firstnameLabel))
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(lastnameTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(firstnameTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(ageLabel)
-                                                .addComponent(emailLabel))
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(emailTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(ageTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(messageLabel)
-                                            .addGap(99, 99, 99)
-                                            .addComponent(messageTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
-                .addContainerGap(81, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lastnameLabel)
+                                            .addComponent(firstnameLabel))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lastnameTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(firstnameTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(ageLabel)
+                                            .addComponent(emailLabel))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(emailTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(ageTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(messageLabel)
+                                                .addGap(99, 99, 99))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(uploadImgBtn)
+                                                .addGap(33, 33, 33)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(messageTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+                                            .addComponent(uploadLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(imageIconLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE)))))))
+                .addGap(81, 81, 81))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(emailValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(203, 203, 203))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lastnameValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(211, 211, 211))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(firstnameValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(203, 203, 203))))
+                        .addGap(203, 203, 203))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(emailValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(203, 203, 203))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(messageValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(210, 210, 210))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,15 +251,21 @@ public class RegisterForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(emailLabel)
                     .addComponent(emailTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(12, 12, 12)
                 .addComponent(emailValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(messageLabel)
                     .addComponent(messageTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-                .addComponent(uploadImgBtn)
-                .addGap(14, 14, 14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(messageValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(uploadImgBtn)
+                    .addComponent(uploadLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(imageIconLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(submitBtn)
                 .addGap(32, 32, 32))
         );
@@ -236,12 +275,15 @@ public class RegisterForm extends javax.swing.JFrame {
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
         // TODO add your handling code here:
-        String firstname, lastname, age, email;
+        String firstname, lastname, age, email, message;
         try {
             firstname = firstnameTxtField.getText();
             lastname = lastnameTxtField.getText();
             age = ageTxtField.getText();
             email = emailTxtField.getText();
+            message = messageTxtField.getText();
+            Pattern pattern = Pattern.compile("^(.+)@(.+)$");
+
             // validation for submit button
             if (firstname == null || firstname.isEmpty()) {
                 firstnameValidation.setText("First name is empty");
@@ -252,10 +294,34 @@ public class RegisterForm extends javax.swing.JFrame {
             if (age == null || age.isEmpty()) {
                 ageValidation.setText("Age is empty");
             }
+            if (age.length() > 3) {
+                ageValidation.setText("Age is invalid. Please enter a valid age!");
+            } else {
+                for (int i = 0; i < age.length(); i++) {
+                    if (Character.isDigit(age.charAt(i)) == false) {
+                        ageValidation.setText("Age contains invalid characters. Please enter a valid age!");
+                    }
+                }
+
+            }
             if (email == null || email.isEmpty()) {
                 emailValidation.setText("Email is empty");
+            }
+            if (!pattern.matcher(emailTxtField.getText()).matches()) {
+                emailValidation.setText("Email is Invalid. Enter a valid email");
+
+            }
+            if (message == null || message.isEmpty()) {
+                messageValidation.setText("Message is empty");
             } else {
-                JOptionPane.showMessageDialog(this, "User Successfully Registered!");
+                JOptionPane.showMessageDialog(this, "User Successfully Registered!\n" + "Name: " + firstname + lastname + "\nAge: " + age + "\nEmail: " + email + "\nMessage: " + message);
+                firstnameTxtField.setText("");
+                lastnameTxtField.setText("");
+                ageTxtField.setText("");
+                emailTxtField.setText("");
+                messageTxtField.setText("");
+                uploadLabel.setText("");
+                imageIconLabel.setText("");
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
@@ -266,8 +332,28 @@ public class RegisterForm extends javax.swing.JFrame {
 
     private void uploadImgBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImgBtnActionPerformed
         // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File f = chooser.getSelectedFile();
+        String filename = f.getAbsolutePath();
+        uploadLabel.setText(filename);
+        try {
+            ImageIcon imageIcon = new ImageIcon(scaleImage(120, 120, ImageIO.read(new File(f.getAbsolutePath()))));
+            imageIconLabel.setIcon(imageIcon);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }//GEN-LAST:event_uploadImgBtnActionPerformed
-
+    public static BufferedImage scaleImage(int w, int h, BufferedImage img) throws Exception {
+        BufferedImage bi;
+        bi = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
+        Graphics2D g2d = (Graphics2D) bi.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+        g2d.drawImage(img, 0, 0, w, h, null);
+        g2d.dispose();
+        return bi;
+    }
     private void firstnameTxtFieldMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firstnameTxtFieldMouseExited
         // TODO add your handling code here:
     }//GEN-LAST:event_firstnameTxtFieldMouseExited
@@ -339,6 +425,18 @@ public class RegisterForm extends javax.swing.JFrame {
         emailValidation.setText("");
     }//GEN-LAST:event_emailTxtFieldFocusGained
 
+    private void messageTxtFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_messageTxtFieldFocusLost
+        // TODO add your handling code here:
+        if (messageTxtField.getText() == null || messageTxtField.getText().isEmpty()) {
+            messageValidation.setText("Email is empty");
+        }
+    }//GEN-LAST:event_messageTxtFieldFocusLost
+
+    private void messageTxtFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_messageTxtFieldFocusGained
+        // TODO add your handling code here:
+        messageValidation.setText("");
+    }//GEN-LAST:event_messageTxtFieldFocusGained
+
     /**
      * @param args the command line arguments
      */
@@ -385,12 +483,15 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JTextField firstnameTxtField;
     private javax.swing.JLabel firstnameValidation;
     private javax.swing.JLabel headingLabel;
+    private javax.swing.JLabel imageIconLabel;
     private javax.swing.JLabel lastnameLabel;
     private javax.swing.JTextField lastnameTxtField;
     private javax.swing.JLabel lastnameValidation;
     private javax.swing.JLabel messageLabel;
     private javax.swing.JTextField messageTxtField;
+    private javax.swing.JLabel messageValidation;
     private javax.swing.JButton submitBtn;
     private javax.swing.JButton uploadImgBtn;
+    private javax.swing.JLabel uploadLabel;
     // End of variables declaration//GEN-END:variables
 }
